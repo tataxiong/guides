@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage{listings,framed,xcolor,xeCJK,graphicx,float,amsmath}
+\usepackage[linkcolor=red,pdfborder={0 0 0},CJKbookmarks=true]{hyperref}
+\setmainfont[BoldFont=SimHei]{SimSun}
+\definecolor{lgray}{rgb}{0.95,0.95,0.95}
+\lstset{
+		basicstyle=\tt,
+%		numbers=left,
+%		stepnumber=1,
+		frame=L,
+		columns=fullflexible,
+		breaklines=true,
+		keywordstyle=\color{blue},
+		backgroundcolor=\color{lgray},
+		stringstyle=\color{red}
+		boxpos=t
+		}
+
+\title{A Guide to Git and Github}
+\author{Internet Service Department}
+\date{\today}
+\begin{document}
+	\maketitle
+	\section{安装与配置} % (fold)
+	\label{sec:安装与配置}
+		\begin{enumerate}
+			\item 首先，注册一个\href{http://github.com/}{Github}帐号。
+			\\在\href{http://msysgit.github.io/}{此处}下载并安装Git for Windows，通常可以直接使用默认配置。安装好之后可以在「开始」菜单中找到「Git Bash」和「Git GUI」两个程序。
+			\item 打开「Git Bash」，首先设置用户名和邮箱，在命令行中键入如下命令：
+			\begin{quote}
+				\begin{lstlisting}
+$ git config --global user.name "Your Name"
+$ git config --global user.email yourmail@server.com
+				\end{lstlisting}
+			\end{quote}
+			\item 然后创建SSH密钥
+			\begin{quote}
+				\begin{lstlisting}
+$ ssh-keygen -C 'yourmail@server.com' -t rsa
+				\end{lstlisting}
+			\end{quote}
+			\item Git Bash会询问储存密钥的路径，方便起见可以使用其默认路径，在windows下即为用户文件夹。生成成功后可以在之前设定的路径中找到{\tt id\_rsa.pub}文件，用记事本打开，文件中的字符即为所需的SSH密钥。
+			\item 登录Github首页，点击Account Setting $\to$ SSH keys $\to$ Add SSH key。title可以随便填写，以可以判断这是自己电脑为原则。在key的输入框中粘贴{\tt id\_rsa.pub}文件中的内容，点击Apply即可。
+			\\测试与 GitHub 是否连接成功：
+			\begin{quote}
+				\begin{lstlisting}
+$ SSH -v git@github.com
+				\end{lstlisting}
+			\end{quote}
+			返回
+			\begin{quote}
+				\begin{lstlisting}
+$ Are you sure you want to continue connecting (yes/no)?
+				\end{lstlisting}
+			\end{quote}
+			时，输入yes。
+			最后，返回
+			\begin{quote}
+				\begin{lstlisting}
+You've successfully authenticated, but GitHub does not provide shell access.
+				\end{lstlisting}
+			\end{quote}
+			时，SSH密钥配置成功。
+		\end{enumerate}
+	% section 安装与配置 (end)
+	\section{Git基本概念} % (fold)
+	\label{sec:git基本概念}
+		\subsection{仓库(Repositories)}
+		仓库即为储存一个项目的代码的目录。仓库里包括了一个项目的全部代码和README文件。可以用本地现有的代码新建一个仓库，并上传至Git，也可以将Git上已有的仓库克隆（clone）到本地，进行操作。
+		\par从本地新建一个仓库的操作是：
+			\begin{quote}
+				\begin{lstlisting}
+$ cd \c\...PATH
+$ git init
+				\end{lstlisting}
+			\end{quote}
+		\par 接着，用{\tt git add}命令来添加改项目中需要追踪的文件（如一个TeX项目中，需要追踪的文件即为.tex文件，.pdf文件和其他的素材文件，而一些临时文件则不需要进行追踪）。
+			\begin{quote}
+				\begin{lstlisting}
+$ git add *.* $ git add *.* $ git add *.* ......
+				\end{lstlisting}
+			\end{quote}
+		\par 从现有的仓库克隆的方法为：
+			\begin{quote}
+				\begin{lstlisting}
+$ git clone git://github.com/....../*.git
+				\end{lstlisting}
+			\end{quote}
+		\par 现有的仓库的克隆地址可以在项目的Github页面上找到。这会在当前目录下创建一个名为“*”的目录，其中包含一个 .git 的目录文件，用于保存下载下来的所有版本记录，然后从中取出最新版本的文件拷贝。在仓库的目录下键入{\tt git status}命令，可以查看已跟踪和未跟踪的文件列表。
+
+	% section git基本概念 (end)
+\end{document}
