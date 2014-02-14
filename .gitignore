@@ -20,6 +20,7 @@ local.properties
 *.fls
 *.out
 *.gz
+*.toc
 
 # External tool builders
 .externalToolBuilders/

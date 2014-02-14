@@ -1,3 +1,6 @@
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+
 \documentclass{article}
 \usepackage{listings,framed,xcolor,xeCJK,graphicx,float,amsmath}
 \usepackage[linkcolor=red,pdfborder={0 0 0},CJKbookmarks=true]{hyperref}
@@ -21,6 +24,8 @@
 \date{\today}
 \begin{document}
 	\maketitle
+	\tableofcontents
+	\newpage
 	\section{安装与配置} % (fold)
 	\label{sec:安装与配置}
 		\begin{enumerate}
@@ -66,27 +71,165 @@ You've successfully authenticated, but GitHub does not provide shell access.
 	\section{Git基本概念} % (fold)
 	\label{sec:git基本概念}
 		\subsection{仓库(Repositories)}
-		仓库即为储存一个项目的代码的目录。仓库里包括了一个项目的全部代码和README文件。可以用本地现有的代码新建一个仓库，并上传至Git，也可以将Git上已有的仓库克隆（clone）到本地，进行操作。
-		\par从本地新建一个仓库的操作是：
-			\begin{quote}
-				\begin{lstlisting}
-$ cd \c\...PATH
-$ git init
-				\end{lstlisting}
-			\end{quote}
-		\par 接着，用{\tt git add}命令来添加改项目中需要追踪的文件（如一个TeX项目中，需要追踪的文件即为.tex文件，.pdf文件和其他的素材文件，而一些临时文件则不需要进行追踪）。
+			仓库即为储存一个项目的代码的目录。仓库里包括了一个项目的全部代码和README文件。可以用本地现有的代码新建一个仓库，并上传至Git，也可以将Git上已有的仓库克隆（clone）到本地，进行操作。
+			\par从本地新建一个仓库的操作是：
+				\begin{quote}
+					\begin{lstlisting}
+$ cd \c\your\repo\path
+$ git init name_of_repo
+					\end{lstlisting}
+				\end{quote}
+			\par 接着，用{\tt git add}命令来添加改项目中需要追踪的文件（如一个TeX项目中，需要追踪的文件即为.tex文件，.pdf文件和其他的素材文件，而一些临时文件则不需要进行追踪）。如果需要永久性的忽略某一类型的文件，可以打开目录中的{\tt .gitignore}文件，并将不需要跟踪的文件添加进去。
 			\begin{quote}
 				\begin{lstlisting}
 $ git add *.* $ git add *.* $ git add *.* ......
 				\end{lstlisting}
 			\end{quote}
-		\par 从现有的仓库克隆的方法为：
+			也可以直接添加全部文件（在{\tt .gitignore}中添加过的文件会被忽略）
+			\begin{quote}
+				\begin{lstlisting}
+$ git add .
+				\end{lstlisting}
+			\end{quote}
+			\par 从现有的仓库克隆的方法为：
 			\begin{quote}
 				\begin{lstlisting}
 $ git clone git://github.com/....../*.git
 				\end{lstlisting}
 			\end{quote}
-		\par 现有的仓库的克隆地址可以在项目的Github页面上找到。这会在当前目录下创建一个名为“*”的目录，其中包含一个 .git 的目录文件，用于保存下载下来的所有版本记录，然后从中取出最新版本的文件拷贝。在仓库的目录下键入{\tt git status}命令，可以查看已跟踪和未跟踪的文件列表。
-
+			\par 现有的仓库的克隆地址可以在项目的Github页面上找到。这会在当前目录下创建一个名为“*”的目录，其中包含一个 .git 的目录文件，用于保存下载下来的所有版本记录，然后从中取出最新版本的文件拷贝。在仓库的目录下键入{\tt git status}命令，可以查看已跟踪和未跟踪的文件列表。
+			\par{\bf\textcolor{red}{有多个项目时，在操作前必须用{\tt cd}命令进入需要操作的项目的目录。}}
+		\subsection{提交与推送（commit and push）} % (fold)
+		\label{sub:提交与推送_commit_and_push_}
+			\par 在git的体系中，本地仓库由三部分组成：工作目录（Working Directory），即实际存在的文件夹。缓存区（Index），用来临时储存项目的改动。和HEAD，即最后一次正式提交的结果。{\tt git add}命令的意义就是将有效改动添加至缓存区，准备提交。
+			\par 当在本地修改项目之后，我们需要提交和推送这些修改。
+			\par 首先是用{\tt git add}命令来添加需要提交的文件，然后键入
+			\begin{quote}
+				\begin{lstlisting}
+$ git commit -m `commit message'
+				\end{lstlisting}
+			\end{quote}
+			提交时需要为这次提交写一些简短的说明（commit message），说明这次修改了哪些地方。{\bf 每次提交相当于为项目创建了一个新的版本}。提交后，所有的改动都提交至了HEAD。
+			\par 如果想省去{\tt git add}这一步，可以直接用
+			\begin{quote}
+				\begin{lstlisting}
+git commit -a -m 'commit message'
+				\end{lstlisting}
+			\end{quote}
+			{\tt commit -a}相当于:
+			\begin{itemize}
+				\item 自动地add所有改动的代码，使得所有的开发代码都列于Index中
+				\item 自动地删除那些在Index中但在工作目录中已经被删除的文件
+				\item 执行commit命令来提交
+			\end{itemize}
+			\textcolor{red}{$\bf\clubsuit$}~但是此命令并不会提交新添加的文件，所以如果有增加文件请乖乖使用{\tt git add}。
+			\par 如果是本地的新建仓库，从来没有推送到服务器过，则应该使用如下命令
+			\begin{quote}
+				\begin{lstlisting}
+$ git remote add origin git@github.com:....../*.git
+$ git push origin master
+				\end{lstlisting}
+			\end{quote}
+			\par 结束工作后，键入以下的命令将本地的改动提交到服务器
+			\begin{quote}
+				\begin{lstlisting}
+$ git push origin master
+				\end{lstlisting}
+			\end{quote}
+			此处的origin为服务器的别名，origin是默认值，也可以在remote的时候自行修改，如果在一个项目remote了多个服务器（如Github和Bitbucket），该命令可以控制push到哪一个服务器。mster为master分支，关于分支会在下面一节中讲到。
+		% subsection 提交与推送_commit_and_push_ (end)
+		\subsection{更新与恢复} % (fold)
+		\label{sub:更新与恢复}
+			有时在本地仓库的代码旧于服务器端的代码时（这在多人开发或者在多台设备上进行开发时比较常见），可以使用如下命令
+			\begin{quote}
+				\begin{lstlisting}
+$ git pull
+				\end{lstlisting}
+			\end{quote}
+			该命令会抓取服务器端的最新版本的代码并将本地的代码更新。
+			\par 在git的体系中，所有提交过的更改都会被保存下来，并且都是可恢复的，即在任何时刻都可以将代码回滚到过去的任何一个版本
+		% subsection 更新与恢复 (end)
 	% section git基本概念 (end)
+	\section{协作与远端操作} % (fold)
+	\label{sec:协作与远端操作}
+		\subsection{分支（branches）} % (fold)
+		\label{sub:分支}
+			使用
+			\begin{quote}
+				\begin{lstlisting}
+$ git branch branch_name
+				\end{lstlisting}
+			\end{quote}
+			命令创建一个分支，分支可以理解为一些相对独立的开发路线。在git中，分支可以随时无限量的被创建和被合并。举个例子，假设在新官网开发项目中，A先生和B先生分别从作为开发主线的master分支中fork（关于fork，会在下一小节中讲到）了一个分支（我们可以称之为a分支和b分支），分别用来写前台代码和后台代码，此时a分支和b分支的开发进程是相对独立的，在A先生和B先生完成了开发之后，他们向服务器push了自己的分支，这样别人就可以抓取这些代码了。然后，可以使用
+			\begin{quote}
+				\begin{lstlisting}
+$ git checketout branch_name
+				\end{lstlisting}
+			\end{quote}
+			命令来切换分支。然后，使用
+			\begin{quote}
+				\begin{lstlisting}
+$ git merge another_branch_name
+				\end{lstlisting}
+			\end{quote}
+			可以合并分支，比如A先生键入了
+			\begin{quote}
+				\begin{lstlisting}
+$ git checketout b 
+$ git merge a
+$ git branch -d a
+				\end{lstlisting}
+			\end{quote}
+			这些命令的含义为：进入b分支，将a分支合并入b分支，删除a分支。
+			\par 如果要删除的分支没有被合并到其它分支中去，那么就不能用{\tt git branch -d}来删除它，需要改用{\tt git branch -D}来强制删除。
+			\par 在分支合并时，有时会出现合并冲突，即两个分支分别修改了同一个文件的同一个地方，此时git会要求手动解决冲突。
+			\par 打开产生冲突的文件，可以看到如下形式的冲突解决标记：
+			\begin{quote}
+				\begin{lstlisting}
+<<<<<<< a:example.html
+
+ AAAAAAA
+
+ ======= 
+
+ BBBBBBB
+
+>>>>>>> b:example.html
+				\end{lstlisting}
+			\end{quote}
+			分割线的上面和下面为冲突行在a分支和欲合并的b分支中的内容，手动删除要抛弃的内容之后，运行一次{\tt git add}来标记问题已解决。然后可以运行一次{\tt git status}来确认一下。解决冲突问题之后，就可以提交commit了。
+
+			~\\\noindent\textbf{参考阅读}：\url{http://www.open-open.com/lib/view/open1328069889514.html}
+		% subsection 分支 (end)
+		\subsection{Fork 与克隆（clone）} % (fold)
+		\label{sub:fork_与克隆_clone_}
+			git中最重要的概念之一就是fork，fork的意义为，将别人的仓库作为一个分支拷贝到自己的仓库，但是和自己创建的分支不同的是，fork过来的项目是作为一个独立的项目存在于你自己的账户下的，并不能随意的与原项目合并（但并不是不能合并）。
+			\par fork的方法为，在想要fork的项目页面点击fork按钮。fork成功之后，使用
+			\begin{quote}
+				\begin{lstlisting}
+$ git clone git@github.com:.../*/git
+				\end{lstlisting}
+			\end{quote}
+			命令将项目克隆到本地，就可以开始进行开发了。
+			申请与原项目合并的方法为，在项目页面使用pull request功能。项目所有者通过后即可合并
+		% subsection fork_与克隆_clone_ (end)
+	% section 协作与远端操作 (end)
+	\section{检阅代码} % (fold)
+	\label{sec:检阅代码}
+		\begin{quote}
+			\begin{lstlisting}
+$ git diff --cached
+$ git diff branch_name
+$ git diff HEAD HEAD^
+			\end{lstlisting}
+		\end{quote}
+		\par{\tt git diff}是用于查看修改的代码信息，上面的代码中，{\tt git diff --cached}用来查看缓存区中的文件相对于HEAD的差异，{\tt git diff branch\_name}用于查看某一分支相对于master分支的差异，{\tt git diff HEAD HEAD$\hat{}$}用于查看当前的HEAD与前一版本的HEAD之间的差异（一个$\hat{}$代表了向前推一个版本）。
+		\begin{quote}
+			\begin{lstlisting}
+$ git log
+$ git log -p
+			\end{lstlisting}
+		\end{quote}
+		\par{\tt git log}命令用于显示开发日志，可以显示出项目从早到晚所有commit的信息。{\tt git log -p}则出了commit信息，还可以调出所有的代码的修改历史。
+	% section 检阅代码 (end)
 \end{document}
