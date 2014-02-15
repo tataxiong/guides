@@ -3,7 +3,13 @@
 
 \documentclass{article}
 \usepackage{listings,framed,xcolor,xeCJK,graphicx,float,amsmath}
-\usepackage[linkcolor=red,pdfborder={0 0 0},CJKbookmarks=true]{hyperref}
+\usepackage[
+			colorlinks,
+			linkcolor=black,
+			pdfborder={0 0 0},
+			CJKbookmarks=true
+			]{hyperref}
+
 \setmainfont[BoldFont=SimHei]{SimSun}
 \definecolor{lgray}{rgb}{0.95,0.95,0.95}
 \lstset{
@@ -212,6 +218,8 @@ $ git clone git@github.com:.../*/git
 			\end{quote}
 			命令将项目克隆到本地，就可以开始进行开发了。
 			申请与原项目合并的方法为，在项目页面使用pull request功能。项目所有者通过后即可合并
+
+			~\\注：这篇教程的内容也作为一个项目储存在github上，项目主页为\url{https://github.com/lamons/guides}，可以拿来做fork和其他一些功能的实验。
 		% subsection fork_与克隆_clone_ (end)
 	% section 协作与远端操作 (end)
 	\section{检阅代码} % (fold)
@@ -231,5 +239,38 @@ $ git log -p
 			\end{lstlisting}
 		\end{quote}
 		\par{\tt git log}命令用于显示开发日志，可以显示出项目从早到晚所有commit的信息。{\tt git log -p}则出了commit信息，还可以调出所有的代码的修改历史。
+		\begin{quote}
+			\begin{lstlisting}
+$ git tag v1.0
+$ git tag -l
+			\end{lstlisting}
+		\end{quote}
+		{\tt git tag}命令可以用来为项目标记版本号。{\tt git tag -l}可以查看最近的版本号。
 	% section 检阅代码 (end)
+	\section{后悔药} % (fold)
+	\label{sec:后悔药}
+		git的一个好处就是，它会保存你所有的完整的历史版本，所以在代码出现问题的时候，随时可以将代码回滚到任意一个历史版本。
+		\begin{quote}
+			\begin{lstlisting}
+$ git checkout -- <filename>
+			\end{lstlisting}
+		\end{quote}
+		这条命令可以用HEAD中的文件替替换掉你的工作目录中的文件，已添加到缓存区的改动，以及新文件，都不受影响。
+		\par 假如你想要丢弃你所有的本地改动与提交，可以到服务器上获取最新的版本并将你本地主分支指向到它：
+		\begin{quote}
+			\begin{lstlisting}
+$ git fetch origin
+$ git reset --hard origin/master
+			\end{lstlisting}
+		\end{quote}
+		可以用以下的代码来回滚到过去的版本
+		\begin{quote}
+			\begin{lstlisting}
+$ git revert HEAD
+$ git revert HEAD^
+$ git revert commit <commit code>
+			\end{lstlisting}
+		\end{quote}
+		{\tt git revert commit <commit code>}命令用来回滚至指定的版本，commit code可以在github项目页面上找到，类似bd22a27dbab52c119c7ff66a1c79a8491f82e5d6这样。
+	% section 后悔药 (end)
 \end{document}
